@@ -458,7 +458,7 @@ export default function PortfolioPage() {
                 "Personal portfolio site built with Next.js, featuring an animated typing hero, a horizontally-scrolling experience timeline with expandable cards, scroll-triggered skill progress bars, and a fully custom dark/light theme system. Designed and built end-to-end to showcase cybersecurity and full-stack development work.",
             tech: ["Next.js", "React", "CSS", "react-icons"],
             github: "https://github.com/rickyrichard26/personal-portfolio.git",
-            liveUrl: null,
+            liveUrl: "https://rickyrichard-portfolio.vercel.app/",
             image: "/portfolio.png",
             icon: <UserIcon />,
         },
