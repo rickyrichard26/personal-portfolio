@@ -4,6 +4,201 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { TypeAnimation } from 'react-type-animation';
 
+const HeroCodeAnimation = () => {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        
+        const codeSnippets = [
+            "function init() { return true; }",
+            "const data = await fetch('/api/v1/users');",
+            "if (vulnerable) executePayload();",
+            "import { useState, useEffect } from 'react';",
+            "SELECT * FROM users WHERE id = 1;",
+            "document.getElementById('root').render();",
+            "console.log('Access Granted');",
+            "while(true) { hack(); }",
+            "let x = Array.from({length: 10});",
+            "module.exports = { config };",
+            "<div><HeroCodeAnimation /></div>",
+            "class User extends Model {}",
+            "try { execute() } catch (e) { log(e) }"
+        ];
+
+        let lines = [];
+        const maxLines = 18;
+
+        const resizeCanvas = () => {
+            const parent = canvas.parentElement;
+            if(parent) {
+                canvas.width = parent.offsetWidth;
+                canvas.height = parent.offsetHeight;
+            }
+        };
+
+        const createLine = () => {
+            return {
+                text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
+                x: Math.random() * (canvas.width || 1000) * 0.8,
+                y: Math.random() * (canvas.height || 800),
+                speed: Math.random() * 0.4 + 0.1,
+                opacity: Math.random() * 0.2 + 0.05,
+                size: Math.floor(Math.random() * 8) + 12
+            };
+        };
+
+        // Initial setup
+        for (let i = 0; i < maxLines; i++) {
+            lines.push(createLine());
+        }
+
+        setTimeout(resizeCanvas, 0);
+        window.addEventListener('resize', resizeCanvas);
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                ctx.fillStyle = `rgba(143, 188, 143, ${line.opacity})`;
+                ctx.font = `${line.size}px monospace`;
+                ctx.fillText(line.text, line.x, line.y);
+                
+                line.y -= line.speed;
+                
+                if (line.y < 50) {
+                    line.opacity -= 0.005;
+                }
+                
+                if (line.y < -20 || line.opacity <= 0) {
+                    lines[i] = createLine();
+                    lines[i].y = canvas.height + 20;
+                }
+            }
+            
+            animationFrameId = requestAnimationFrame(draw);
+        };
+
+        draw();
+
+        return () => {
+            window.removeEventListener('resize', resizeCanvas);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 0,
+                pointerEvents: 'none'
+            }}
+        />
+    );
+};
+
+const AnimatedBackground = () => {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        let animationFrameId;
+        let particles = [];
+
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        };
+
+        const initParticles = () => {
+            particles = [];
+            const numberOfParticles = Math.floor((canvas.width * canvas.height) / 12000);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.8,
+                    vy: (Math.random() - 0.5) * 0.8,
+                    radius: Math.random() * 2 + 0.5
+                });
+            }
+        };
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#8fbc8f';
+            
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 130) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(143, 188, 143, ${1 - distance / 130})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            animationFrameId = requestAnimationFrame(draw);
+        };
+
+        draw();
+
+        return () => {
+            window.removeEventListener('resize', resizeCanvas);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, []);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 0,
+                opacity: 0.25,
+                pointerEvents: 'none'
+            }}
+        />
+    );
+};
+
 import {
     SiTypescript,
     SiJavascript,
@@ -23,19 +218,19 @@ import { FaJava, FaSearch, FaSatelliteDish, FaFlag } from "react-icons/fa";
 // Inline Premium SVGs for Project Cards
 const RobotIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="16" width="48" height="36" rx="8" fill="url(#robot-gradient)" stroke="#93C5FD" strokeWidth="2" />
-        <rect x="20" y="8" width="24" height="8" rx="2" fill="#60A5FA" />
+        <rect x="8" y="16" width="48" height="36" rx="8" fill="url(#robot-gradient)" stroke="#1b4d3e" strokeWidth="2" />
+        <rect x="20" y="8" width="24" height="8" rx="2" fill="#1b4d3e" />
         <circle cx="32" cy="8" r="3" fill="#FBBF24" />
         <rect x="18" y="26" width="8" height="8" rx="2" fill="#E0F2FE" />
-        <circle cx="22" cy="30" r="2" fill="#3B82F6" />
+        <circle cx="22" cy="30" r="2" fill="#1b4d3e" />
         <rect x="38" y="26" width="8" height="8" rx="2" fill="#E0F2FE" />
-        <circle cx="42" cy="30" r="2" fill="#3B82F6" />
+        <circle cx="42" cy="30" r="2" fill="#1b4d3e" />
         <rect x="22" y="42" width="20" height="4" rx="2" fill="#E0F2FE" />
-        <path d="M6 30H8M56 30H58" stroke="#93C5FD" strokeWidth="3" strokeLinecap="round" />
+        <path d="M6 30H8M56 30H58" stroke="#1b4d3e" strokeWidth="3" strokeLinecap="round" />
         <defs>
             <linearGradient id="robot-gradient" x1="8" y1="16" x2="56" y2="52" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -43,13 +238,13 @@ const RobotIcon = () => (
 
 const ShieldIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M32 6L10 14V30C10 44.2 19.4 57.4 32 61C44.6 57.4 54 44.2 54 30V14L32 6Z" fill="url(#shield-gradient)" stroke="#93C5FD" strokeWidth="2" strokeLinejoin="round" />
-        <path d="M32 14V52" stroke="#60A5FA" strokeWidth="2" strokeDasharray="4 4" />
-        <path d="M22 30H42" stroke="#60A5FA" strokeWidth="2" strokeDasharray="4 4" />
+        <path d="M32 6L10 14V30C10 44.2 19.4 57.4 32 61C44.6 57.4 54 44.2 54 30V14L32 6Z" fill="url(#shield-gradient)" stroke="#1b4d3e" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M32 14V52" stroke="#1b4d3e" strokeWidth="2" strokeDasharray="4 4" />
+        <path d="M22 30H42" stroke="#1b4d3e" strokeWidth="2" strokeDasharray="4 4" />
         <defs>
             <linearGradient id="shield-gradient" x1="10" y1="6" x2="54" y2="61" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -57,14 +252,14 @@ const ShieldIcon = () => (
 
 const LockIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="14" y="24" width="36" height="28" rx="6" fill="url(#lock-gradient)" stroke="#93C5FD" strokeWidth="2" />
-        <path d="M20 24V17C20 10.3726 25.3726 5 32 5C38.6274 5 44 10.3726 44 17V24" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
+        <rect x="14" y="24" width="36" height="28" rx="6" fill="url(#lock-gradient)" stroke="#1b4d3e" strokeWidth="2" />
+        <path d="M20 24V17C20 10.3726 25.3726 5 32 5C38.6274 5 44 10.3726 44 17V24" stroke="#1b4d3e" strokeWidth="4" strokeLinecap="round" />
         <circle cx="32" cy="36" r="4" fill="#FBBF24" />
         <path d="M32 40V45" stroke="#FBBF24" strokeWidth="3" strokeLinecap="round" />
         <defs>
             <linearGradient id="lock-gradient" x1="14" y1="24" x2="50" y2="52" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -72,10 +267,10 @@ const LockIcon = () => (
 
 const NetworkIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="14" r="6" fill="#3B82F6" stroke="#93C5FD" strokeWidth="2" />
-        <circle cx="16" cy="42" r="6" fill="#1E3A8A" stroke="#60A5FA" strokeWidth="2" />
-        <circle cx="48" cy="42" r="6" fill="#1E3A8A" stroke="#60A5FA" strokeWidth="2" />
-        <path d="M29 19L19 37M35 19L45 37M22 42H42" stroke="#93C5FD" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="32" cy="14" r="6" fill="#1b4d3e" stroke="#1b4d3e" strokeWidth="2" />
+        <circle cx="16" cy="42" r="6" fill="#1b4d3e" stroke="#1b4d3e" strokeWidth="2" />
+        <circle cx="48" cy="42" r="6" fill="#1b4d3e" stroke="#1b4d3e" strokeWidth="2" />
+        <path d="M29 19L19 37M35 19L45 37M22 42H42" stroke="#1b4d3e" strokeWidth="2" strokeLinecap="round" />
         <circle cx="32" cy="30" r="3" fill="#FBBF24" />
         <defs />
     </svg>
@@ -83,13 +278,13 @@ const NetworkIcon = () => (
 
 const MagnifierIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="26" cy="26" r="16" stroke="#93C5FD" strokeWidth="4" fill="url(#mag-gradient)" />
-        <rect x="42" y="38" width="6" height="18" rx="3" transform="rotate(-45 42 38)" fill="#60A5FA" />
+        <circle cx="26" cy="26" r="16" stroke="#1b4d3e" strokeWidth="4" fill="url(#mag-gradient)" />
+        <rect x="42" y="38" width="6" height="18" rx="3" transform="rotate(-45 42 38)" fill="#1b4d3e" />
         <path d="M20 20C20 20 22 17 26 17" stroke="white" strokeWidth="2" strokeLinecap="round" />
         <defs>
             <linearGradient id="mag-gradient" x1="10" y1="10" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -97,15 +292,15 @@ const MagnifierIcon = () => (
 
 const ChartIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="10" width="48" height="44" rx="4" fill="url(#chart-gradient)" stroke="#93C5FD" strokeWidth="2" />
+        <rect x="8" y="10" width="48" height="44" rx="4" fill="url(#chart-gradient)" stroke="#1b4d3e" strokeWidth="2" />
         <path d="M16 44L26 32L36 38L48 22" stroke="#FBBF24" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx="26" cy="32" r="3" fill="white" />
         <circle cx="36" cy="38" r="3" fill="white" />
         <circle cx="48" cy="22" r="3" fill="white" />
-        <line x1="12" y1="46" x2="52" y2="46" stroke="#60A5FA" strokeWidth="2" />
+        <line x1="12" y1="46" x2="52" y2="46" stroke="#1b4d3e" strokeWidth="2" />
         <defs>
             <linearGradient id="chart-gradient" x1="8" y1="10" x2="56" y2="54" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
                 <stop offset="1" stopColor="#0F172A" />
             </linearGradient>
         </defs>
@@ -114,13 +309,13 @@ const ChartIcon = () => (
 
 const FlagIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 8V56" stroke="#60A5FA" strokeWidth="4" strokeLinecap="round" />
-        <path d="M12 10L44 18L12 30V10Z" fill="url(#flag-gradient)" stroke="#93C5FD" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M12 8V56" stroke="#1b4d3e" strokeWidth="4" strokeLinecap="round" />
+        <path d="M12 10L44 18L12 30V10Z" fill="url(#flag-gradient)" stroke="#1b4d3e" strokeWidth="2" strokeLinejoin="round" />
         <circle cx="44" cy="18" r="4" fill="#FBBF24" />
         <defs>
             <linearGradient id="flag-gradient" x1="12" y1="10" x2="44" y2="30" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -128,14 +323,14 @@ const FlagIcon = () => (
 
 const MarketIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="24" width="48" height="32" rx="4" fill="url(#market-gradient)" stroke="#93C5FD" strokeWidth="2" />
-        <path d="M20 24V18C20 13.58 23.58 10 28 10H36C40.42 10 44 13.58 44 18V24" stroke="#60A5FA" strokeWidth="3" strokeLinecap="round" />
+        <rect x="8" y="24" width="48" height="32" rx="4" fill="url(#market-gradient)" stroke="#1b4d3e" strokeWidth="2" />
+        <path d="M20 24V18C20 13.58 23.58 10 28 10H36C40.42 10 44 13.58 44 18V24" stroke="#1b4d3e" strokeWidth="3" strokeLinecap="round" />
         <circle cx="24" cy="40" r="4" fill="#FBBF24" />
         <circle cx="40" cy="40" r="4" fill="#FBBF24" />
-        <line x1="16" y1="32" x2="48" y2="32" stroke="#93C5FD" strokeWidth="1.5" strokeDasharray="3 3" />
+        <line x1="16" y1="32" x2="48" y2="32" stroke="#1b4d3e" strokeWidth="1.5" strokeDasharray="3 3" />
         <defs>
             <linearGradient id="market-gradient" x1="8" y1="24" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
                 <stop offset="1" stopColor="#0F172A" />
             </linearGradient>
         </defs>
@@ -172,24 +367,24 @@ const ExternalLinkIcon = () => (
 const UserIcon = () => (
     <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Browser/window frame */}
-        <rect x="6" y="12" width="52" height="40" rx="6" fill="url(#portfolio-gradient)" stroke="#93C5FD" strokeWidth="2" />
+        <rect x="6" y="12" width="52" height="40" rx="6" fill="url(#portfolio-gradient)" stroke="#1b4d3e" strokeWidth="2" />
         {/* Browser top bar */}
-        <rect x="6" y="12" width="52" height="10" rx="6" fill="#1E3A8A" />
+        <rect x="6" y="12" width="52" height="10" rx="6" fill="#1b4d3e" />
         <circle cx="14" cy="17" r="2" fill="#FBBF24" />
         <circle cx="21" cy="17" r="2" fill="#34D399" />
         <circle cx="28" cy="17" r="2" fill="#F87171" />
         {/* Page content blocks */}
         <rect x="14" y="28" width="14" height="14" rx="3" fill="#E0F2FE" />
-        <circle cx="21" cy="33" r="3" fill="#3B82F6" />
-        <rect x="17" y="38" width="8" height="2" rx="1" fill="#3B82F6" />
+        <circle cx="21" cy="33" r="3" fill="#1b4d3e" />
+        <rect x="17" y="38" width="8" height="2" rx="1" fill="#1b4d3e" />
         <rect x="34" y="28" width="22" height="3" rx="1.5" fill="#E0F2FE" />
-        <rect x="34" y="34" width="22" height="3" rx="1.5" fill="#BFDBFE" />
-        <rect x="34" y="40" width="14" height="3" rx="1.5" fill="#BFDBFE" />
-        <path d="M4 32H6M58 32H60" stroke="#93C5FD" strokeWidth="3" strokeLinecap="round" />
+        <rect x="34" y="34" width="22" height="3" rx="1.5" fill="#1b4d3e" />
+        <rect x="34" y="40" width="14" height="3" rx="1.5" fill="#1b4d3e" />
+        <path d="M4 32H6M58 32H60" stroke="#1b4d3e" strokeWidth="3" strokeLinecap="round" />
         <defs>
             <linearGradient id="portfolio-gradient" x1="6" y1="12" x2="58" y2="52" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#3B82F6" />
-                <stop offset="1" stopColor="#1E3A8A" />
+                <stop stopColor="#1b4d3e" />
+                <stop offset="1" stopColor="#1b4d3e" />
             </linearGradient>
         </defs>
     </svg>
@@ -227,24 +422,7 @@ export default function PortfolioPage() {
         setCaptchaInput("");
         setCaptchaError(false);
     };
-    const [theme, setTheme] = useState("light");
-
-    useEffect(() => {
-        const isDark = document.documentElement.classList.contains("dark");
-        setTheme(isDark ? "dark" : "light");
-    }, []);
-
-    const toggleTheme = () => {
-        const currentTheme = document.documentElement.classList.contains("dark") ? "dark" : "light";
-        const nextTheme = currentTheme === "light" ? "dark" : "light";
-        setTheme(nextTheme);
-        localStorage.setItem("theme", nextTheme);
-        if (nextTheme === "dark") {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
-    };
+    // Generate Captcha only
 
     // Refs for tracking scroll positions
     const sections = {
@@ -327,27 +505,27 @@ export default function PortfolioPage() {
     };
 
     const languageSkills = [
-        { name: "TypeScript", percentage: 85, level: "Advanced", icon: <SiTypescript />, color: "#3178C6" },
+        { name: "TypeScript", percentage: 85, level: "Advanced", icon: <SiTypescript />, color: "#1b4d3e" },
         { name: "Java", percentage: 85, level: "Advanced", icon: <FaJava />, color: "#F89820" },  // ← changed
         { name: "JavaScript", percentage: 80, level: "Advanced", icon: <SiJavascript />, color: "#F7DF1E" },
         { name: "PHP", percentage: 70, level: "Intermediate", icon: <SiPhp />, color: "#777BB4" },
         { name: "Python", percentage: 60, level: "Intermediate", icon: <SiPython />, color: "#3776AB" },
-        { name: "Dart", percentage: 55, level: "Intermediate", icon: <SiDart />, color: "#0175C2" },
+        { name: "Dart", percentage: 55, level: "Intermediate", icon: <SiDart />, color: "#1b4d3e" },
     ];
 
     const frameworkSkills = [
-        { name: "React.js / Next.js", percentage: 82, level: "Advanced", icon: <SiReact />, color: "#61DAFB" },
-        { name: "Tailwind CSS", percentage: 80, level: "Advanced", icon: <SiTailwindcss />, color: "#38BDF8" },
+        { name: "React.js / Next.js", percentage: 82, level: "Advanced", icon: <SiReact />, color: "#1b4d3e" },
+        { name: "Tailwind CSS", percentage: 80, level: "Advanced", icon: <SiTailwindcss />, color: "#1b4d3e" },
         { name: "Node.js / Express", percentage: 78, level: "Advanced", icon: <SiNodedotjs />, color: "#68A063" },
         { name: "Laravel", percentage: 70, level: "Intermediate", icon: <SiLaravel />, color: "#FF2D20" },
-        { name: "Flutter", percentage: 65, level: "Intermediate", icon: <SiFlutter />, color: "#0175C2" },
-        { name: "PostgreSQL / MySQL", percentage: 75, level: "Advanced", icon: <SiPostgresql />, color: "#336791" },
+        { name: "Flutter", percentage: 65, level: "Intermediate", icon: <SiFlutter />, color: "#1b4d3e" },
+        { name: "PostgreSQL / MySQL", percentage: 75, level: "Advanced", icon: <SiPostgresql />, color: "#1b4d3e" },
     ];
 
     const securitySkills = [
-        { name: "Wireshark / NetworkMiner", percentage: 80, level: "Advanced", icon: <SiWireshark />, color: "#1679A7" },
+        { name: "Wireshark / NetworkMiner", percentage: 80, level: "Advanced", icon: <SiWireshark />, color: "#1b4d3e" },
         { name: "FTK Imager / Autopsy", percentage: 78, level: "Advanced", icon: <FaSearch />, color: "#E85D04" },
-        { name: "PCAP & Traffic Analysis", percentage: 75, level: "Intermediate", icon: <FaSatelliteDish />, color: "#7C3AED" },
+        { name: "PCAP & Traffic Analysis", percentage: 75, level: "Intermediate", icon: <FaSatelliteDish />, color: "#1b4d3e" },
         { name: "CTF & Web Exploitation", percentage: 72, level: "Intermediate", icon: <FaFlag />, color: "#DC2626" },
     ];
     const projectsData = [
@@ -490,6 +668,7 @@ export default function PortfolioPage() {
 
     return (
         <div>
+            <AnimatedBackground />
             {/* HEADER / NAVIGATION */}
             <header className="header">
                 <div className="container navbar">
@@ -510,9 +689,6 @@ export default function PortfolioPage() {
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
                             </a>
                         ))}
-                        <button className="theme-toggle-btn" onClick={toggleTheme} aria-label="Toggle Theme">
-                            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-                        </button>
                         <a href="#contact" onClick={(e) => { e.preventDefault(); handleScrollTo("contact"); }} className="btn-hire flex-center">
                             Hire Me
                         </a>
@@ -529,6 +705,7 @@ export default function PortfolioPage() {
 
             {/* HERO SECTION */}
             <section id="home" ref={sections.home} className="hero">
+                <HeroCodeAnimation />
                 <div className="particles-bg"></div>
                 <div className="glow-orb glow-orb-1"></div>
                 <div className="glow-orb glow-orb-2"></div>
