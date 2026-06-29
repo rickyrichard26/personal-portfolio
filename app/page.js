@@ -746,7 +746,7 @@ export default function PortfolioPage() {
                 {/* Stats row now spans full width, horizontal, below everything */}
                 <div className="stats-grid">
                     <div className="stat-card">
-                        <div className="stat-number">4+</div>
+                        <div className="stat-number">5+</div>
                         <div className="stat-label">Projects Built</div>
                     </div>
                     <div className="stat-card">
