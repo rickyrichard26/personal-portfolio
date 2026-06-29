@@ -751,7 +751,7 @@ export default function PortfolioPage() {
                     </div>
                     <div className="stat-card">
                         <div className="stat-number">7+</div>
-                        <div className="stat-label">Certifications</div>
+                        <div className="stat-label">GitHub Commits</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-number">1+</div>
