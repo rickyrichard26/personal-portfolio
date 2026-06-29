@@ -686,7 +686,7 @@ export default function PortfolioPage() {
                             </div>
                             <p className="edu-desc">
                                 Relevant Courses: Digital Forensics, Ethical Hacking,
-                                Cryptography & Data Structured, Software Engineering, Numerical Methods.
+                                Cryptography Data Security, Security Risk Management Audit, Cyber Security Fundamentals.
                             </p>
                         </div>
                         <br></br>
