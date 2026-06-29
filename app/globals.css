@@ -1832,8 +1832,6 @@ html.dark .skill-name-pro {
   flex-shrink: 0;
 }
 
-html.dark .skill-pct {}
-
 .skill-level-label {
   font-size: 11px;
   color: var(--text-secondary);
