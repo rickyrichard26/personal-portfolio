@@ -749,7 +749,7 @@ export default function PortfolioPage() {
                             <button onClick={() => handleScrollTo("projects")} className="btn-primary">
                                 View My Work
                             </button>
-                            <a href="/resume.pdf"
+                            <a href="/CV_Richard.pdf"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 download="Ricky_Richard_Takahindangen_Resume.pdf"
