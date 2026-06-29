@@ -11,7 +11,7 @@ const HeroCodeAnimation = () => {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         let animationFrameId;
-        
+
         const codeSnippets = [
             "function init() { return true; }",
             "const data = await fetch('/api/v1/users');",
@@ -33,7 +33,7 @@ const HeroCodeAnimation = () => {
 
         const resizeCanvas = () => {
             const parent = canvas.parentElement;
-            if(parent) {
+            if (parent) {
                 canvas.width = parent.offsetWidth;
                 canvas.height = parent.offsetHeight;
             }
@@ -60,26 +60,26 @@ const HeroCodeAnimation = () => {
 
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
-                
+
                 ctx.fillStyle = `rgba(143, 188, 143, ${line.opacity})`;
                 ctx.font = `${line.size}px monospace`;
                 ctx.fillText(line.text, line.x, line.y);
-                
+
                 line.y -= line.speed;
-                
+
                 if (line.y < 50) {
                     line.opacity -= 0.005;
                 }
-                
+
                 if (line.y < -20 || line.opacity <= 0) {
                     lines[i] = createLine();
                     lines[i].y = canvas.height + 20;
                 }
             }
-            
+
             animationFrameId = requestAnimationFrame(draw);
         };
 
@@ -142,7 +142,7 @@ const AnimatedBackground = () => {
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#8fbc8f';
-            
+
             particles.forEach((p, index) => {
                 p.x += p.vx;
                 p.y += p.vy;
