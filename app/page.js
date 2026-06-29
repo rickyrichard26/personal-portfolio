@@ -680,7 +680,7 @@ export default function PortfolioPage() {
                             <div className="edu-header">
                                 <div>
                                     <h3 className="edu-title">B.S. Informatics — Cyber Security</h3>
-                                    <div className="edu-school">GPA: 3.71/4.00</div>
+                                    <div className="edu-school">Expected Graduation: 2027</div>
                                 </div>
                                 <span className="edu-badge">2024 - Present</span>
                             </div>
