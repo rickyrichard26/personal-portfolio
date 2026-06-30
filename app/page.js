@@ -1766,7 +1766,7 @@ export default function PortfolioPage() {
                         <span>RRT</span>
                     </div>
                     <p>© {new Date().getFullYear()} Ricky Richard Takahindangen. All rights reserved.</p>
-                    <p className="footer-tech">Built with React, Next.js &amp; TypeScript.</p>
+                    <p className="footer-tech">Built with React, Next.js &amp; JavaScript.</p>
                 </div>
             </footer>
         </div>
