@@ -391,11 +391,33 @@ const UserIcon = () => (
 );
 
 export default function PortfolioPage() {
+    const [loading, setLoading] = useState(true);
+    const [fadeExit, setFadeExit] = useState(false);
     const [activeSection, setActiveSection] = useState("home");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [skillFilter, setSkillFilter] = useState("all");
     const [projectFilter, setProjectFilter] = useState("all");
     const [expandedExp, setExpandedExp] = useState({});
+
+    useEffect(() => {
+        // Disable scroll during load
+        document.body.style.overflow = "hidden";
+
+        const fadeTimer = setTimeout(() => {
+            setFadeExit(true);
+        }, 2200);
+
+        const unmountTimer = setTimeout(() => {
+            setLoading(false);
+            document.body.style.overflow = ""; // Re-enable scroll
+        }, 2500);
+
+        return () => {
+            clearTimeout(fadeTimer);
+            clearTimeout(unmountTimer);
+            document.body.style.overflow = ""; // Clean up/re-enable
+        };
+    }, []);
 
     const toggleExp = (id) => {
         setExpandedExp((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -478,26 +500,25 @@ export default function PortfolioPage() {
 
         setHumanError(false);
         setFormStatus("submitting");
+
+        // Construct mailto link
+        const emailTo = "takahindangenricky@gmail.com";
+        const emailSubject = encodeURIComponent(formData.subject || `Message from ${formData.name}`);
+        const emailBody = encodeURIComponent(
+            `Name: ${formData.name}\n` +
+            `Email: ${formData.email}\n\n` +
+            `Message:\n${formData.message}`
+        );
+        const mailtoUrl = `mailto:${emailTo}?subject=${emailSubject}&body=${emailBody}`;
+
+        // Redirect to open the default email client
+        window.location.href = mailtoUrl;
+
         setTimeout(() => {
             setFormStatus("success");
             setFormData({ name: "", email: "", subject: "", message: "" });
             setIsHuman(false);
-        }, 1500);
-
-        // Validate CAPTCHA
-        if (parseInt(captchaInput, 10) !== captcha.answer) {
-            setCaptchaError(true);
-            refreshCaptcha();
-            return;
-        }
-
-        setCaptchaError(false);
-        setFormStatus("submitting");
-        setTimeout(() => {
-            setFormStatus("success");
-            setFormData({ name: "", email: "", subject: "", message: "" });
-            refreshCaptcha();
-        }, 1500);
+        }, 1000);
     };
 
     const handleInputChange = (e) => {
@@ -668,6 +689,25 @@ export default function PortfolioPage() {
 
     return (
         <div>
+            {loading && (
+                <div className={`intro-loader ${fadeExit ? "fade-out" : ""}`}>
+                    <div className="loader-content">
+                        <div className="loader-logo">
+                            <div className="logo-icon flex-center pulse-logo">{"</>"}</div>
+                            <span className="logo-brand">RR<span className="logo-text-blue">T</span></span>
+                        </div>
+                        <div className="loader-terminal">
+                            <div className="term-line line-1">&gt; Initializing system credentials...</div>
+                            <div className="term-line line-2">&gt; Loading cybersecurity modules...</div>
+                            <div className="term-line line-3">&gt; Securing port connection...</div>
+                            <div className="term-line line-4">&gt; Launching Ricky's portfolio...</div>
+                        </div>
+                        <div className="loader-progress-container">
+                            <div className="loader-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <AnimatedBackground />
             {/* HEADER / NAVIGATION */}
             <header className="header">
@@ -862,8 +902,7 @@ export default function PortfolioPage() {
                                 <span className="edu-badge">2024 - Present</span>
                             </div>
                             <p className="edu-desc">
-                                Relevant Courses: Digital Forensics, Ethical Hacking,
-                                Cryptography Data Security, Security Risk Management Audit, Cyber Security Fundamentals.
+                                <strong>Relevant Courses: Digital Forensics, Ethical Hacking, Cryptography Data Security, Security Risk Management Audit, Cyber Security Fundamentals.</strong>
                             </p>
                         </div>
                         <br></br>
@@ -1752,6 +1791,16 @@ export default function PortfolioPage() {
                                 <button type="submit" className="btn-submit" disabled={formStatus === "submitting"}>
                                     {formStatus === "submitting" ? "Sending..." : "Send Message"}
                                 </button>
+                                {formStatus === "error" && (
+                                    <p className="captcha-error-msg" style={{ marginTop: "12px", color: "#ef4444" }}>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <line x1="12" y1="8" x2="12" y2="12" />
+                                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                                        </svg>
+                                        Failed to send message. Please try again.
+                                    </p>
+                                )}
                             </form>
                         )}
                     </div>

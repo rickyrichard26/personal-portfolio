@@ -138,25 +138,9 @@ body {
   overflow-x: hidden;
   font-family: var(--font-sans);
   background-color: var(--bg-body);
-  color: var(--text-medium);
+  color: var(--col-text-2);
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
-}
-
-/* ── Dark mode: starfield + body overrides ─────────────────── */
-html.dark body {
-  background-color: var(--bg-body);
-  color: var(--col-text-2);
-}
-
-html.dark body::before {
-  content: '';
-  display: none;
-}
-
-html.dark body>* {
-  position: relative;
-  z-index: 1;
 }
 
 h1,
@@ -166,17 +150,8 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  color: var(--text-dark);
-  font-weight: 700;
-}
-
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4,
-html.dark h5,
-html.dark h6 {
   color: var(--col-text-1);
+  font-weight: 700;
 }
 
 a {
@@ -1516,7 +1491,7 @@ html.dark .stat-card:hover::before {
 }
 
 html.dark .stat-number {
-  background: linear-gradient(135deg, #1b4d3e 0%, #1b4d3e 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #d1fae5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -2321,29 +2296,19 @@ html.dark .project-link-disabled:hover {
   padding: 8px 4px 28px;
   margin: 0 -4px;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
   /* FIXED: tidak lagi di-hide di dark mode */
   display: block;
 }
 
 html.dark .exp-scroll-wrap::-webkit-scrollbar {
-  height: 6px;
-}
-
-html.dark .exp-scroll-wrap::-webkit-scrollbar-thumb {
-  background: rgba(143, 188, 143, .3);
-  border-radius: 999px;
+  display: none;
 }
 
 .exp-scroll-wrap::-webkit-scrollbar {
-  height: 6px;
-}
-
-.exp-scroll-wrap::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 999px;
+  display: none;
 }
 
 .exp-timeline {
@@ -2719,401 +2684,7 @@ html.dark .exp-desc {
   border-top-color: var(--col-border);
 }
 
-/* ── Dark: vertical timeline (opsional, jika ada di HTML) ──── */
-.experiences-timeline {
-  display: none;
-  /* default hidden; tampil hanya jika ada di HTML dan di dark mode */
-  position: relative;
-  padding-left: 34px;
-}
 
-html.dark .experiences-timeline {
-  display: block;
-}
-
-.experiences-timeline::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: 8px;
-  bottom: 8px;
-  width: 1px;
-  background: linear-gradient(180deg, var(--col-blue-neon) 0%, rgba(143, 188, 143, .05) 100%);
-  box-shadow: 0 0 8px rgba(143, 188, 143, .2);
-}
-
-.exp-item {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.exp-item:last-child {
-  margin-bottom: 0;
-}
-
-.exp-dot-v {
-  position: absolute;
-  left: -34px;
-  top: 12px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--col-bg);
-  border: 2px solid var(--col-blue-neon);
-  box-shadow: 0 0 12px rgba(143, 188, 143, .5), 0 0 0 4px rgba(143, 188, 143, .08);
-  transition: all 0.25s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.exp-dot-v::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--col-blue-neon);
-  box-shadow: 0 0 6px var(--col-blue-neon);
-}
-
-.exp-item:hover .exp-dot-v {
-  box-shadow: 0 0 20px rgba(143, 188, 143, .7), 0 0 0 6px rgba(143, 188, 143, .12);
-  transform: scale(1.15);
-}
-
-.exp-card-dark {
-  background: var(--col-surface);
-  border: 1px solid var(--col-border);
-  border-radius: 18px;
-  padding: 22px 24px;
-  backdrop-filter: blur(14px);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.exp-card-dark::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, var(--col-blue-neon), var(--col-blue-royal));
-  box-shadow: 0 0 10px var(--col-blue-neon);
-  transform: scaleY(0);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  transform-origin: top;
-}
-
-.exp-card-dark:hover {
-  border-color: var(--col-border-glow);
-  box-shadow: var(--glow-hover);
-  transform: translateX(5px);
-}
-
-.exp-card-dark:hover::before {
-  transform: scaleY(1);
-}
-
-.exp-header-dark {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.exp-header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.exp-header-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.exp-role-dark {
-  font-weight: 700;
-  color: var(--col-text-1);
-  margin: 0;
-}
-
-.exp-org-dark {
-  font-weight: 600;
-  color: var(--col-blue-neon);
-}
-
-.exp-period {
-  color: var(--col-text-3);
-}
-
-.exp-type-badge {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: .05em;
-}
-
-.exp-badge-blue {
-  background: rgba(143, 188, 143, .1);
-  color: var(--col-blue-neon);
-  border: 1px solid rgba(143, 188, 143, .25);
-}
-
-.exp-badge-navy {
-  background: rgba(143, 188, 143, .1);
-  color: #a5b4fc;
-  border: 1px solid rgba(143, 188, 143, .25);
-}
-
-.exp-badge-teal {
-  background: rgba(45, 212, 191, .1);
-  color: #2dd4bf;
-  border: 1px solid rgba(45, 212, 191, .25);
-}
-
-.exp-badge-amber {
-  background: rgba(251, 191, 36, .1);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, .25);
-}
-
-.exp-bullets {
-  padding-left: 18px;
-  color: var(--col-text-2);
-  line-height: 1.78;
-  margin: 0 0 14px;
-}
-
-.exp-bullets li {
-  margin-bottom: 3px;
-}
-
-.exp-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.exp-tag {
-  font-size: 10px;
-  background: rgba(143, 188, 143, .07);
-  color: var(--col-blue-neon);
-  border: 1px solid rgba(143, 188, 143, .18);
-  border-radius: 6px;
-  padding: 3px 9px;
-}
-
-.experience-list {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-html.dark .experience-list {
-  display: none;
-}
-
-/* JRPG cards disembunyikan di dark mode */
-
-.experience-card {
-  background-color: var(--bg-card);
-  border: 4px solid var(--text-dark);
-  border-radius: 4px;
-  padding: 28px;
-  position: relative;
-  box-shadow: 6px 6px 0px var(--text-dark);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.experience-card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0px var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.experience-card-inner {
-  display: flex;
-  width: 100%;
-  gap: 24px;
-}
-
-.experience-logo-container {
-  width: 80px;
-  height: 80px;
-  border: 3px solid var(--text-dark);
-  border-radius: 4px;
-  background-color: var(--border-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  image-rendering: pixelated;
-  box-shadow: 2px 2px 0px var(--text-dark);
-  position: relative;
-}
-
-.experience-card:hover .experience-logo-container {
-  border-color: var(--primary-color);
-  box-shadow: 2px 2px 0px var(--primary-color);
-}
-
-.experience-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.experience-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.experience-role-title {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--text-dark);
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-}
-
-.experience-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.experience-org {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-.experience-duration {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  font-family: monospace;
-}
-
-.experience-badge {
-  background-color: var(--border-light);
-  color: var(--text-dark);
-  border: 2px solid var(--text-dark);
-  border-radius: 4px;
-  font-family: monospace;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
-  text-transform: uppercase;
-  box-shadow: 1px 1px 0px var(--text-dark);
-}
-
-.experience-card:hover .experience-badge {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
-  box-shadow: 1px 1px 0px var(--primary-color);
-}
-
-.experience-desc {
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--text-medium);
-}
-
-.experience-objectives {
-  margin-top: 8px;
-  border-top: 2px dashed var(--border-color);
-  padding-top: 16px;
-}
-
-.objectives-title {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.objectives-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.objective-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-medium);
-}
-
-.objective-checkbox {
-  color: var(--primary-color);
-  font-family: monospace;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.experience-rewards {
-  background-color: var(--primary-light);
-  border: 2px solid var(--primary-color);
-  border-radius: 4px;
-  padding: 12px 16px;
-  margin-top: 8px;
-  box-shadow: 2px 2px 0px var(--primary-color);
-}
-
-.rewards-title {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--primary-dark);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  font-family: monospace;
-}
-
-.rewards-list {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  font-family: monospace;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-dark);
-}
-
-.reward-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.reward-icon {
-  color: #f59e0b;
-}
 
 .contact-grid {
   display: grid;
@@ -3745,5 +3316,132 @@ html.dark .footer-links a:hover {
   html.dark .pulse-dot,
   html.dark .badge {
     animation: none;
+  }
+}
+
+/* ── INTRO LOADER ───────────────────────────────────────────── */
+.intro-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background-color: var(--bg-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.intro-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-content {
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.loader-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pulse-logo {
+  animation: logoPulseLoading 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes logoPulseLoading {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 10px rgba(143, 188, 143, 0.2);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: var(--glow-blue);
+  }
+}
+
+.loader-logo .logo-brand {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
+.loader-terminal {
+  width: 100%;
+  background: rgba(143, 188, 143, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  min-height: 124px;
+}
+
+.term-line {
+  opacity: 0;
+  transform: translateY(4px);
+  animation: termLineFadeIn 0.3s ease forwards;
+}
+
+.term-line.line-1 {
+  animation-delay: 0.2s;
+}
+
+.term-line.line-2 {
+  animation-delay: 0.7s;
+}
+
+.term-line.line-3 {
+  animation-delay: 1.2s;
+}
+
+.term-line.line-4 {
+  animation-delay: 1.7s;
+  color: var(--primary-hover);
+  font-weight: bold;
+}
+
+@keyframes termLineFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loader-progress-container {
+  width: 100%;
+  height: 4px;
+  background: rgba(143, 188, 143, 0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.loader-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  border-radius: 99px;
+  animation: progressFillLoading 2.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+}
+
+@keyframes progressFillLoading {
+  to {
+    width: 100%;
   }
 }
