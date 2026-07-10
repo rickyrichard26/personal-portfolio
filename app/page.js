@@ -213,7 +213,7 @@ import {
     SiPostgresql,
     SiWireshark,
 } from "react-icons/si";
-import { FaJava, FaSearch, FaSatelliteDish, FaFlag } from "react-icons/fa";
+import { FaJava, FaSearch, FaSatelliteDish, FaFlag, FaUsers, FaLightbulb, FaComments, FaBrain } from "react-icons/fa";
 
 // Inline Premium SVGs for Project Cards
 const RobotIcon = () => (
@@ -398,6 +398,56 @@ export default function PortfolioPage() {
     const [skillFilter, setSkillFilter] = useState("all");
     const [projectFilter, setProjectFilter] = useState("all");
     const [expandedExp, setExpandedExp] = useState({});
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    const [hexLog, setHexLog] = useState("");
+    const [decryptProgress, setDecryptProgress] = useState(0);
+
+    useEffect(() => {
+        if (!loading) return;
+        const hexChars = "0123456789ABCDEF";
+        const hexInterval = setInterval(() => {
+            let hex = "";
+            for (let i = 0; i < 16; i++) {
+                hex += hexChars[Math.floor(Math.random() * 16)];
+                if (i % 2 === 1 && i < 15) hex += ":";
+            }
+            setHexLog(hex);
+        }, 80);
+
+        const progressInterval = setInterval(() => {
+            setDecryptProgress((prev) => {
+                if (prev >= 100) {
+                    clearInterval(progressInterval);
+                    return 100;
+                }
+                return prev + Math.floor(Math.random() * 8) + 4;
+            });
+        }, 150);
+
+        return () => {
+            clearInterval(hexInterval);
+            clearInterval(progressInterval);
+        };
+    }, [loading]);
+
+    const aboutPhotos = [
+        { src: "/aboutme.jpeg", label: "CYBER SECURITY • INFORMATICS" },
+        { src: "/regen.jpeg", label: "MC of PUSB Regen 2025" },
+        { src: "/broadtalk.jpeg", label: "BroadTalk 2025" },
+        { src: "/studybanding.jpeg", label: "Study Banding to UMN" },
+        { src: "/upnvj.jpeg", label: "MC of UPNVJ x PUSB Study Banding" },
+        { src: "/bca.jpeg", label: "MC of BCA 2025" },
+        { src: "/lst.jpeg", label: "PUSB 2024-2025" },
+    ];
+    const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActivePhotoIndex((prev) => (prev + 1) % aboutPhotos.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [aboutPhotos.length]);
 
     useEffect(() => {
         // Disable scroll during load
@@ -459,6 +509,7 @@ export default function PortfolioPage() {
     // Scroll active section tracking
     useEffect(() => {
         const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
             const scrollPos = window.scrollY + 120;
             for (const section in sections) {
                 const ref = sections[section].current;
@@ -548,6 +599,13 @@ export default function PortfolioPage() {
         { name: "FTK Imager / Autopsy", percentage: 78, level: "Advanced", icon: <FaSearch />, color: "#E85D04" },
         { name: "PCAP & Traffic Analysis", percentage: 75, level: "Intermediate", icon: <FaSatelliteDish />, color: "#1b4d3e" },
         { name: "CTF & Web Exploitation", percentage: 72, level: "Intermediate", icon: <FaFlag />, color: "#DC2626" },
+    ];
+
+    const softSkills = [
+        { name: "Public Speaking & Communication", percentage: 88, level: "Advanced", icon: <FaComments />, color: "#10b981" },
+        { name: "Leadership & Collaboration", percentage: 85, level: "Advanced", icon: <FaUsers />, color: "#3b82f6" },
+        { name: "Critical Thinking & Analysis", percentage: 90, level: "Advanced", icon: <FaLightbulb />, color: "#fbbf24" },
+        { name: "Adaptability & Continuous Learning", percentage: 87, level: "Advanced", icon: <FaBrain />, color: "#ec4899" },
     ];
     const projectsData = [
         {
@@ -691,17 +749,26 @@ export default function PortfolioPage() {
         <div>
             {loading && (
                 <div className={`intro-loader ${fadeExit ? "fade-out" : ""}`}>
-                    <div className="loader-content">
-                        <div className="loader-logo">
-                            <div className="logo-icon flex-center pulse-logo">{"</>"}</div>
+                    <div className="loader-content cyber-loader-minimal">
+                        <div className="cyber-shield-wrapper">
+                            <div className="cyber-shield-ring"></div>
+                            <div className="cyber-shield-radar"></div>
+                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.5" className="cyber-shield-icon">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <path d="M12 8v4" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" />
+                                <path d="M12 16h.01" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                        </div>
+                        
+                        <div className="cyber-loader-brand">
                             <span className="logo-brand">RR<span className="logo-text-blue">T</span></span>
+                            <span className="logo-sub">SECURE SYSTEM</span>
                         </div>
-                        <div className="loader-terminal">
-                            <div className="term-line line-1">&gt; Initializing system credentials...</div>
-                            <div className="term-line line-2">&gt; Loading cybersecurity modules...</div>
-                            <div className="term-line line-3">&gt; Securing port connection...</div>
-                            <div className="term-line line-4">&gt; Launching Ricky's portfolio...</div>
+                        
+                        <div className="cyber-status-text">
+                            DECRYPTING PORTAL CORE // <span className="hex-glow">{hexLog.substring(0, 5)}</span> // {Math.min(decryptProgress, 100)}%
                         </div>
+                        
                         <div className="loader-progress-container">
                             <div className="loader-progress-bar"></div>
                         </div>
@@ -710,7 +777,7 @@ export default function PortfolioPage() {
             )}
             <AnimatedBackground />
             {/* HEADER / NAVIGATION */}
-            <header className="header">
+            <header className={`header ${isScrolled ? "scrolled" : ""}`}>
                 <div className="container navbar">
                     <a href="#home" onClick={(e) => { e.preventDefault(); handleScrollTo("home"); }} className="logo">
                         <div className="logo-icon flex-center">{"</>"}</div>
@@ -762,8 +829,7 @@ export default function PortfolioPage() {
                                 "",
                                 500,
                             ]}
-                            speed={50}
-                            deletionSpeed={65}
+                            speed={55}
                             cursor={true}
                             repeat={Infinity}
                             wrapper="h1"
@@ -771,15 +837,20 @@ export default function PortfolioPage() {
                         />
                         <TypeAnimation
                             sequence={[
-                                "IT Student · Full-Stack Developer · Cyber Security",
+                                "IT Student",
                                 2000,
-                                "",
-                                500,
+                                "Full-Stack Developer",
+                                2000,
+                                "Cyber Security Specialist",
+                                2000,
+                                "Public Speaker & Event MC",
+                                2000,
                             ]}
-                            speed={60}
-                            deletionSpeed={70}
+                            speed={50}
+                            deletionSpeed={65}
                             cursor={true}
                             repeat={Infinity}
+                            wrapper="span"
                             className="hero-subtitle"
                         />
                         <p className="hero-desc">
@@ -934,7 +1005,7 @@ export default function PortfolioPage() {
                                         <line x1="3" y1="10" x2="21" y2="10" />
                                     </svg>
                                 </div>
-                                <span>Available: Now (Internship)</span>
+                                <span>Available: Now (Internship & Job)</span>
                             </div>
                         </div>
                     </div>
@@ -946,14 +1017,69 @@ export default function PortfolioPage() {
 
                             {/* Photo with scanning line overlay */}
                             <div className="profile-photo-wrap">
-                                <img src="/aboutme.jpeg" alt="Profile" className="profile-photo" />
-                                <div className="scan-line"></div>
+                                {aboutPhotos.map((photo, idx) => (
+                                    <img
+                                        key={idx}
+                                        src={photo.src}
+                                        alt={photo.label}
+                                        className={`profile-photo ${idx === activePhotoIndex ? "active" : ""}`}
+                                        style={{
+                                            position: "absolute",
+                                            top: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height: "100%",
+                                            opacity: idx === activePhotoIndex ? 1 : 0,
+                                            transform: idx === activePhotoIndex ? "scale(1)" : "scale(1.05)",
+                                            transition: "opacity 0.8s ease-in-out, transform 0.8s ease-in-out",
+                                            objectFit: "cover",
+                                            zIndex: idx === activePhotoIndex ? 2 : 1,
+                                        }}
+                                    />
+                                ))}
+                                <div className="scan-line" style={{ zIndex: 3 }}></div>
+
+                                {/* Dot indicators on the right side of the photo */}
+                                <div className="about-photo-dots" style={{
+                                    position: "absolute",
+                                    right: "12px",
+                                    top: "50%",
+                                    transform: "translateY(-50%)",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "8px",
+                                    zIndex: 4,
+                                    background: "rgba(0, 0, 0, 0.4)",
+                                    padding: "8px 6px",
+                                    borderRadius: "20px",
+                                    backdropFilter: "blur(4px)",
+                                    border: "1px solid rgba(255, 255, 255, 0.1)"
+                                }}>
+                                    {aboutPhotos.map((_, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setActivePhotoIndex(idx)}
+                                            style={{
+                                                width: "6px",
+                                                height: "6px",
+                                                borderRadius: "50%",
+                                                background: idx === activePhotoIndex ? "var(--primary-color)" : "rgba(255, 255, 255, 0.4)",
+                                                border: "none",
+                                                padding: 0,
+                                                cursor: "pointer",
+                                                transition: "all 0.3s ease",
+                                                boxShadow: idx === activePhotoIndex ? "0 0 8px var(--primary-color)" : "none"
+                                            }}
+                                            aria-label={`Go to photo ${idx + 1}`}
+                                        />
+                                    ))}
+                                </div>
                             </div>
 
                             {/* ID-strip footer, like a badge/credential tag */}
                             <div className="about-id-strip">
                                 <span className="about-id-dot"></span>
-                                <span className="about-id-text">CYBER SECURITY · INFORMATICS</span>
+                                <span className="about-id-text">{aboutPhotos[activePhotoIndex].label}</span>
                             </div>
                         </div>
                     </div>
@@ -1080,6 +1206,43 @@ export default function PortfolioPage() {
                             <div key={index} className="skill-card-pro">
                                 <div className="skill-card-top">
                                     <div className="skill-icon-box" style={{ background: skill.color + "18", border: `1px solid ${skill.color}30` }}>
+                                        <span style={{ fontSize: "18px" }}>{skill.icon}</span>
+                                    </div>
+                                    <div className="skill-info">
+                                        <div className="skill-name-row">
+                                            <span className="skill-name-pro">{skill.name}</span>
+                                            <span className="skill-pct" style={{ color: skill.color }}>{skill.percentage}%</span>
+                                        </div>
+                                        <span className="skill-level-label">{skill.level}</span>
+                                    </div>
+                                </div>
+                                <div className="skill-bar-bg">
+                                    <div className="skill-bar-fill" style={{ width: `${skill.percentage}%`, background: `linear-gradient(90deg, ${skill.color}, ${skill.color}99)` }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* ── Soft Skills ── */}
+                <div className="skills-block">
+                    <div className="skills-block-header">
+                        <div className="skills-block-title-row">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg>
+                            <h3 className="skills-block-title">Soft Skills & Competencies</h3>
+                        </div>
+                        <span className="skills-block-count">{softSkills.length} skills</span>
+                    </div>
+                    <div className="skills-grid-pro">
+                        {softSkills.map((skill, index) => (
+                            <div key={index} className="skill-card-pro">
+                                <div className="skill-card-top">
+                                    <div className="skill-icon-box" style={{ background: skill.color + "18", border: `1px solid ${skill.color}30`, color: skill.color }}>
                                         <span style={{ fontSize: "18px" }}>{skill.icon}</span>
                                     </div>
                                     <div className="skill-info">
@@ -1818,6 +1981,154 @@ export default function PortfolioPage() {
                     <p className="footer-tech">Built with React, Next.js &amp; JavaScript.</p>
                 </div>
             </footer>
+
+            {/* FLOATING CHATBOT WIDGET */}
+            <ChatBot />
         </div>
     );
 }
+
+// ── FLOATING CHATBOT COMPONENT ──────────────────────────────────────
+const ChatBot = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [messages, setMessages] = useState([
+        {
+            sender: "bot",
+            text: "Halo! Saya RRT Security Assistant. Ada yang bisa saya bantu tentang Ricky Richard?",
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+    ]);
+    const [input, setInput] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            scrollToBottom();
+        }
+    }, [messages, isTyping, isOpen]);
+
+    const handleSend = (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+
+        const userText = input.trim();
+        const userMsg = {
+            sender: "user",
+            text: userText,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setMessages((prev) => [...prev, userMsg]);
+        setInput("");
+        setIsTyping(true);
+
+        setTimeout(() => {
+            setIsTyping(false);
+            let reply = "Maaf, saya tidak begitu memahami pertanyaan tersebut. Coba tanyakan tentang 'kuliah', 'project', 'skills', 'google singapore', atau 'kontak'.";
+            const cleanText = userText.toLowerCase();
+
+            if (cleanText.includes("google") || cleanText.includes("singapore") || cleanText.includes("singapura") || cleanText.includes("workshop") || cleanText.includes("nus") || cleanText.includes("malaya") || cleanText.includes("um")) {
+                reply = "Ricky memiliki pengalaman internasional yang luar biasa! Pada Juli 2025, ia mengikuti AI-Agent Workshop di Developer Space @ Google Singapore. Ia juga terpilih sebagai delegasi dari LeadersID untuk mengunjungi National University of Singapore (NUS) dan University of Malaya (UM) di Kuala Lumpur.";
+            } else if (cleanText.includes("pengalaman") || cleanText.includes("organisasi") || cleanText.includes("kerja") || cleanText.includes("pusb") || cleanText.includes("board")) {
+                reply = "Pengalaman organisasi & kepemimpinan Ricky cukup luas, di antaranya:\n1. Member of Social Media Specialist di President University Student Board (PUSB) tahun 2024-2025.\n2. Aktif menjadi Master of Ceremonies (MC) untuk acara formal maupun non-formal kampus, seperti MC PUSB Regen 2025, MC BroadTalk 2025, dan MC BCA 2025.";
+            } else if (cleanText.includes("kuliah") || cleanText.includes("kampus") || cleanText.includes("universitas") || cleanText.includes("president") || cleanText.includes("akademis") || cleanText.includes("sekolah") || cleanText.includes("pendidikan") || cleanText.includes("jurusan") || cleanText.includes("informatika")) {
+                reply = "Ricky saat ini adalah mahasiswa aktif S1 program studi Informatika (Informatics) dengan fokus spesialisasi pada Cyber Security di President University, angkatan 2023.";
+            } else if (cleanText.includes("mc") || cleanText.includes("broadtalk") || cleanText.includes("bca") || cleanText.includes("public speaking") || cleanText.includes("bicara")) {
+                reply = "Ricky sangat mahir dalam Public Speaking. Ia sering dipercaya menjadi Master of Ceremonies (MC), antara lain pada acara PUSB Regen 2025, BroadTalk 2025, MC BCA 2025, serta MC Study Banding antara UPNVJ dan PUSB.";
+            } else if (cleanText.includes("project") || cleanText.includes("proyek") || cleanText.includes("karya") || cleanText.includes("pumps") || cleanText.includes("flutter")) {
+                reply = "Beberapa proyek unggulan Ricky:\n1. PUMPS: Student Marketplace (web app PHP/MySQL untuk jual beli produk mahasiswa)\n2. University Event Management (Flutter/Dart mobile app untuk Android/iOS)\n3. Miami PD Forensics Investigation (analisis forensik digital dengan Autopsy)\n4. CTF Ethical Hacking writeups.";
+            } else if (cleanText.includes("skills") || cleanText.includes("keahlian") || cleanText.includes("kemampuan") || cleanText.includes("bahasa") || cleanText.includes("programming") || cleanText.includes("hacking") || cleanText.includes("forensik")) {
+                reply = "Keahlian Ricky mencakup:\n- Cyber Security: Ethical Hacking, Digital Forensics (Autopsy), Vulnerability Exploitation, CTF challenges.\n- App Development: Next.js, React, Flutter, Dart, Node.js, PHP, Python, MySQL.\n- Soft Skills: Public Speaking, Kepemimpinan, dan Analisis Berpikir Kritis.";
+            } else if (cleanText.includes("siapa") || cleanText.includes("profil") || cleanText.includes("biodata") || cleanText.includes("diri") || cleanText.includes("nama")) {
+                reply = "Ricky Richard Takahindangen adalah mahasiswa Informatika Cyber Security di President University yang memiliki minat tinggi di bidang penetration testing, digital forensics, dan full-stack development.";
+            } else if (cleanText.includes("kontak") || cleanText.includes("email") || cleanText.includes("hubungi") || cleanText.includes("linkedin") || cleanText.includes("sosmed") || cleanText.includes("instagram")) {
+                reply = "Anda dapat menghubungi Ricky melalui email student di ricky.richard@student.president.ac.id, atau LinkedIn (ricky-richard). Anda juga bisa mengirim pesan langsung via form kontak di bagian bawah halaman portofolio ini.";
+            } else if (cleanText === "halo" || cleanText === "hi" || cleanText === "p" || cleanText === "hey" || cleanText.startsWith("halo") || cleanText.startsWith("hi")) {
+                reply = "Halo! Saya RRT Security Assistant. Ada yang bisa saya bantu tentang Ricky Richard? Tanyakan tentang 'pengalaman', 'proyek', 'keahlian', 'kuliah', atau 'kontak'.";
+            }
+
+            const botMsg = {
+                sender: "bot",
+                text: reply,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setMessages((prev) => [...prev, botMsg]);
+        }, 1000);
+    };
+
+    return (
+        <div className="cyber-chatbot-container">
+            {!isOpen && (
+                <button className="chatbot-launcher" onClick={() => setIsOpen(true)}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span className="launcher-badge"></span>
+                </button>
+            )}
+
+            {isOpen && (
+                <div className="chatbot-window">
+                    <div className="chatbot-header">
+                        <div className="bot-info">
+                            <span className="status-dot"></span>
+                            <div>
+                                <h4>RRT Secure Bot</h4>
+                                <p>Cyber Assistant</p>
+                            </div>
+                        </div>
+                        <button className="close-btn" onClick={() => setIsOpen(false)}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="chatbot-messages">
+                        {messages.map((msg, idx) => (
+                            <div key={idx} className={`chat-message ${msg.sender === "bot" ? "bot" : "user"}`}>
+                                <div className="msg-bubble">
+                                    <p>{msg.text}</p>
+                                    <span className="msg-time">{msg.time}</span>
+                                </div>
+                            </div>
+                        ))}
+                        {isTyping && (
+                            <div className="chat-message bot typing">
+                                <div className="msg-bubble">
+                                    <span className="typing-dots">
+                                        <span></span><span></span><span></span>
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    <form onSubmit={handleSend} className="chatbot-input-area">
+                        <input
+                            type="text"
+                            placeholder="Tanya seputar Ricky..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                        />
+                        <button type="submit" className="send-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            )}
+        </div>
+    );
+};
+
+
